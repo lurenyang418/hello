@@ -46,7 +46,7 @@ jobs:
         run: flutter pub get
 
       - name: Build macOS (${{ matrix.arch }})
-        run: export FLUTTER_XCODE_ARCHS=${{ matrix.arch }} flutter build macos --release
+        run: export FLUTTER_XCODE_ARCHS=${{ matrix.suffix }} flutter build macos --release
 
 
       - name: Create DMG
