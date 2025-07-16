@@ -46,14 +46,14 @@ jobs:
         run: flutter pub get
 
       - name: Build macOS (${{ matrix.arch }})
-        run: export FLUTTER_XCODE_ARCHS={{ matrix.arch }} flutter build macos --release
+        run: export FLUTTER_XCODE_ARCHS=${{ matrix.arch }} flutter build macos --release
 
 
       - name: Create DMG
         run: |
           brew install create-dmg
           create-dmg \
-            ${{ github.event.repository.name }}-$${{ github.ref_name }}-${{ matrix.suffix }}.dmg \
+            ${{ github.event.repository.name }}-${{ github.ref_name }}-${{ matrix.suffix }}.dmg \
             build/macos/Build/Products/Release/${{ github.event.repository.name }}.app
 
       - name: Upload Release Asset
@@ -61,6 +61,6 @@ jobs:
         with:
           tag_name: ${{ github.ref_name }}
           files: |
-            ${{ github.event.repository.name }}-$${{ github.ref_name }}-${{ matrix.suffix }}.dmg
+            ${{ github.event.repository.name }}-${{ github.ref_name }}-${{ matrix.suffix }}.dmg
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
