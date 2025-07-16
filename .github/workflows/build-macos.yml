@@ -20,7 +20,7 @@ jobs:
           - arch: intel
             flutter_arch: x64
             target: x86_64-apple-darwin
-            suffix: intel
+            suffix: x86_64
 
           - arch: arm64
             flutter_arch: arm64
@@ -46,18 +46,14 @@ jobs:
         run: flutter pub get
 
       - name: Build macOS (${{ matrix.arch }})
-        run: flutter build macos --release
+        run: export FLUTTER_XCODE_ARCHS={{ matrix.arch }} flutter build macos --release
 
-      # 可选：签名（需配置 secrets）
-      # - name: Codesign
-      #   run: codesign --force --deep --sign "Developer ID Application: Your Name" build/macos/Build/Products/Release/Runner.app
 
       - name: Create DMG
         run: |
           brew install create-dmg
           create-dmg \
-            --no-internet-enable \
-            ${{ github.event.repository.name }}-${{ matrix.suffix }}.dmg \
+            ${{ github.event.repository.name }}-$${{ github.ref_name }}-${{ matrix.suffix }}.dmg \
             build/macos/Build/Products/Release/${{ github.event.repository.name }}.app
 
       - name: Upload Release Asset
@@ -65,6 +61,6 @@ jobs:
         with:
           tag_name: ${{ github.ref_name }}
           files: |
-            ${{ github.event.repository.name }}-${{ matrix.suffix }}.dmg
+            ${{ github.event.repository.name }}-$${{ github.ref_name }}-${{ matrix.suffix }}.dmg
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
